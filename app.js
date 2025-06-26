@@ -10,7 +10,6 @@ form.addEventListener('submit', async (e) => {
   addMessage(userMessage, 'user');
   input.value = '';
 
-  // Placeholder bot response
   const botReply = await getBotReply(userMessage);
   addMessage(botReply, 'bot');
 });
@@ -24,6 +23,19 @@ function addMessage(text, sender) {
 }
 
 async function getBotReply(userInput) {
-  // Placeholder for real backend call
-  return "Okay, noted! (Bot logic coming soon)";
+  try {
+    const response = await fetch("https://cybersapiens-call-agent-backend-production.up.railway.app/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ user_input: userInput })
+    });
+
+    const data = await response.json();
+    return data.bot_reply || "Sorry, no response.";
+  } catch (error) {
+    console.error("Error fetching bot reply:", error);
+    return "Something went wrong. Please try again.";
+  }
 }
